@@ -8,22 +8,20 @@ import org.aldogioia.templatesecurity.security.logging.Auditable;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
-
-@Entity
-@Table(name = "blacklist_tokens")
 @Data
+@Entity
 @NoArgsConstructor
+@Table(name = "ticket_types")
 @EqualsAndHashCode(callSuper = true)
 @EntityListeners(AuditingEntityListener.class)
-public class Blacklist extends Auditable {
+public class TicketType extends Auditable {
     @Id
     @UuidGenerator
     private String id;
 
-    @Column(name = "token", nullable = false, unique = true)
-    private String token;
+    @Column(name = "name", unique = true, nullable = false)
+    private String name;
 
-    @Column(name = "expiration", nullable = false)
-    private Date expiration;
+    @Column(name = "description", nullable = false)
+    private String description;
 }

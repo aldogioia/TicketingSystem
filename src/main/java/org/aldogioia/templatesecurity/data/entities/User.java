@@ -4,18 +4,19 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.aldogioia.templatesecurity.data.enumerators.Role;
 import org.aldogioia.templatesecurity.security.logging.Auditable;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+@Data
 @Entity
+@NoArgsConstructor
 @Table(name = "users")
+@EqualsAndHashCode(callSuper = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
-@Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @EntityListeners(AuditingEntityListener.class)
 public class User extends Auditable {
     @Id
@@ -32,9 +33,16 @@ public class User extends Auditable {
     @Column(name = "surname", nullable = false)
     private String surname;
 
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
     @Column(name = "phone_number", nullable = false, unique = true)
     private String phoneNumber;
 
     @Column(name = "password")
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private java.util.List<Ticket> tickets;
 }
