@@ -1,4 +1,4 @@
-package org.aldogioia.templatesecurity.data.dto;
+package org.aldogioia.templatesecurity.data.dto.responses;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

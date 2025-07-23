@@ -30,14 +30,14 @@ public class JwtHandler {
     }
 
     public String generateRefreshToken(User user) {
-        return createToken(user, 1, ChronoUnit.MONTHS, TokenType.REFRESH);
+        return createToken(user, 365, ChronoUnit.DAYS, TokenType.REFRESH);
     }
 
     private String createToken(User user, long amountToAdd, ChronoUnit unit, TokenType type) {
         Instant issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getPhoneNumber())
+                .subject(user.getEmail())
                 .issueTime(Date.from(issuedAt))
                 .expirationTime(Date.from(issuedAt.plus(amountToAdd, unit)))
                 .claim("role", user.getRole().name())
@@ -102,7 +102,7 @@ public class JwtHandler {
         return "invalid";
     }
 
-    public String getPhoneNumberFromToken(String token) {
+    public String getEmailFromToken(String token) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
             return signedJWT.getJWTClaimsSet().getSubject();

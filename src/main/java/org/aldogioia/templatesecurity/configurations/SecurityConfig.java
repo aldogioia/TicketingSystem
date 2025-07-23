@@ -37,7 +37,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(18);
+        return new BCryptPasswordEncoder(12);
     }
 
     @Bean
@@ -51,16 +51,15 @@ public class SecurityConfig {
                 }))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers(
-//                                "/api/v1/auth/sign-in",
-//                                "/api/v1/auth/sign-up",
-//                                "/api/v1/auth/refresh",
-//                                "/api/v1/password/**",
-//                                "/api/v1/admin/**"
-//                        ).permitAll()
-//                        .anyRequest().authenticated()
-//                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/v1/auth/sign-in",
+                                "/api/v1/auth/sign-up",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/auth/sign-out"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtEntryPoint));
         return httpSecurity.build();

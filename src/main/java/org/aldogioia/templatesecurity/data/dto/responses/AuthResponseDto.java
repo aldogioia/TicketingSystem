@@ -1,4 +1,4 @@
-package org.aldogioia.templatesecurity.data.dto;
+package org.aldogioia.templatesecurity.data.dto.responses;
 
 import lombok.Data;
 

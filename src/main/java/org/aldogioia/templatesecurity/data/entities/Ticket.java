@@ -33,12 +33,16 @@ public class Ticket extends Auditable {
     @Column(name = "closed_on")
     private LocalDateTime closedOn;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private User user;
+    @Column(name= "price_at_purchase", nullable = false)
+    private Double priceAtPurchase;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exhibition_id", nullable = false)
+    @JoinColumn(name = "exhibition_price_id", nullable = false)
     @ToString.Exclude
-    private Exhibition exhibition;
+    private ExhibitionPrice exhibitionPrice;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
+    private User user;
 }

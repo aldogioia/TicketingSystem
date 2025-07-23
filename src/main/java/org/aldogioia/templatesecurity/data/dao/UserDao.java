@@ -23,6 +23,14 @@ public interface UserDao extends JpaRepository<User, String> {
     Optional<User> findByEmail(String email);
 
     /**
+     * Verifica se esiste un utente con l'indirizzo email specificato.
+     *
+     * @param email l'indirizzo email da verificare
+     * @return {@code true} se non esiste un utente con quell'email, {@code false} altrimenti
+     */
+    Boolean existsByEmail(String email);
+
+    /**
      * Recupera un utente tramite il numero di telefono.
      *
      * @param phoneNumber il numero di telefono dell'utente

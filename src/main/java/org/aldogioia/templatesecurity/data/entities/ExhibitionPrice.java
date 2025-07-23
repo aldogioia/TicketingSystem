@@ -12,23 +12,27 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "ticket_prices")
+@Table(name = "exhibition_prices", uniqueConstraints = @UniqueConstraint(
+        name = "unique_exhibition_ticket_type",
+        columnNames = {"exhibition_id", "ticket_type_id"}
+))
 @EqualsAndHashCode(callSuper = true)
 @EntityListeners(AuditingEntityListener.class)
-public class TicketPrice extends Auditable {
+public class ExhibitionPrice extends Auditable {
     @Id
     @UuidGenerator
     private String id;
 
+    @Column(nullable = false)
     private Double price;
 
-    @ManyToOne
-    @JoinColumn(name = "ticket_type_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exhibition_id", nullable = false)
+    @ToString.Exclude
+    private Exhibition exhibition;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_type_id", nullable = false)
     @ToString.Exclude
     private TicketType ticketType;
-
-    @ManyToOne
-    @JoinColumn(name = "ticket_id")
-    @ToString.Exclude
-    private Ticket ticket;
 }

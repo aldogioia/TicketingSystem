@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.aldogioia.templatesecurity.security.logging.Auditable;
+import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
@@ -21,12 +22,13 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class Exhibition extends Auditable {
     @Id
+    @UuidGenerator
     private String id;
 
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "start_date", nullable = false)
@@ -44,7 +46,7 @@ public class Exhibition extends Auditable {
     @Column(name = "duration", nullable = false)
     private Integer duration;
 
-    @OneToMany(mappedBy = "exhibition", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "exhibition", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<Ticket> tickets;
+    private List<ExhibitionPrice> prices;
 }

@@ -22,6 +22,6 @@ public class TicketType extends Auditable {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 }

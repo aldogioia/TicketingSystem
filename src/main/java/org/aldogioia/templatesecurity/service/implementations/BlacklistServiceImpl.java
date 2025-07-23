@@ -32,7 +32,7 @@ public class BlacklistServiceImpl implements BlacklistService {
         return blacklistDao.existsByToken(token);
     }
 
-    @Scheduled(cron = "0 0 15 * * *")
+    @Scheduled(cron = "0 0 8 * * *")
     @Transactional
     public void cleanUp() {
         blacklistDao.deleteAllByExpirationBefore(Date.from(Instant.now().truncatedTo(ChronoUnit.SECONDS)));

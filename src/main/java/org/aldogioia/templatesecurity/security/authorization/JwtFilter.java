@@ -31,9 +31,9 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = jwtHandler.getJwtFromRequest(request, TokenType.ACCESS);
-        if (!jwt.equals("invalid") && jwtHandler.isValidAccessToken(jwt) && blacklistService.isTokenBlacklisted(jwt)) {
-            String phoneNumberFromToken = jwtHandler.getPhoneNumberFromToken(jwt);
-            CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(phoneNumberFromToken);
+        if (!jwt.equals("invalid") && jwtHandler.isValidAccessToken(jwt) && !blacklistService.isTokenBlacklisted(jwt)) {
+            String emailFromToken = jwtHandler.getEmailFromToken(jwt);
+            CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(emailFromToken);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);

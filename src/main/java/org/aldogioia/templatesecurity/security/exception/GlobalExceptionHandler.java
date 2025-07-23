@@ -2,7 +2,9 @@ package org.aldogioia.templatesecurity.security.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.aldogioia.templatesecurity.data.dto.ErrorDto;
+import org.aldogioia.templatesecurity.data.dto.responses.ErrorDto;
+import org.aldogioia.templatesecurity.security.exception.customException.EmailException;
+import org.aldogioia.templatesecurity.security.exception.customException.TicketExpiredException;
 import org.aldogioia.templatesecurity.security.exception.customException.TokenException;
 import org.aldogioia.templatesecurity.security.exception.customException.TokenExpiredException;
 import org.springframework.http.HttpStatus;
@@ -42,6 +44,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorDto onEntityNotFoundException(WebRequest req, EntityNotFoundException e) {
+        return createErrorResponse(req, e.getMessage());
+    }
+
+    @ExceptionHandler(TicketExpiredException.class)
+    @ResponseStatus(HttpStatus.GONE)
+    public ErrorDto onTicketExpiredException(WebRequest req, TicketExpiredException e) {
+        return createErrorResponse(req, e.getMessage());
+    }
+
+    @ExceptionHandler(EmailException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorDto onEmailException(WebRequest req, EmailException e) {
         return createErrorResponse(req, e.getMessage());
     }
 
