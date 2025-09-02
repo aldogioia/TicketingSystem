@@ -46,6 +46,24 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    public void sendConfirmNewsletterSubscribe(String email) {
+        String textContent = "Grazie per esserti iscritto alla nostra newsletter!\n" +
+                "Riceverai aggiornamenti sulle nostre mostre e eventi.\n\n" +
+                "Se non hai richiesto questa operazione, ignora questa email.\n\n" +
+                "Grazie";
+
+        try {
+            sendEmail(textContent, email, "Conferma Iscrizione Newsletter");
+        } catch (MessagingException e) {
+            throw new EmailException("Errore durante l'invio dell'email di conferma iscrizione newsletter");
+        }
+    }
+
+    @Override
+    public void sendNewsletterEmail() {
+    }
+
+    @Override
     public void sendTicketEmail(String email, Ticket ticket) {
         String textContent = "Ciao, " + ticket.getUser().getName() +".\n\n" +
                 "Hai acquistato un biglietto per la mostra: " +
@@ -86,4 +104,45 @@ public class EmailServiceImpl implements EmailService {
 
         javaMailSender.send(message);
     }
+
+//    public void sendNewsletterEmail(
+//            String toEmail,
+//            String subject,
+//            String messageText,
+//            byte[] attachmentBytes,
+//            String attachmentFilename,
+//            String unsubscribeToken
+//    ) {
+//        try {
+//            MimeMessage message = javaMailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+//
+//            helper.setFrom("newsletter@miosito.it");
+//            helper.setTo(toEmail);
+//            helper.setSubject(subject);
+//
+//            if (unsubscribeToken != null) {
+//
+//            }
+//            String unsubscribeLink = unsubscribeBaseUrl + "?email=" + toEmail + "&token=" + unsubscribeToken;
+//
+//            String htmlContent =
+//                    "<html><body>" +
+//                            "<p style='font-size:16px;color:#303030;'>" + messageText + "</p>" +
+//                            "<p style='margin-top:20px;font-size:12px;color:#636363;'>Se non desideri più ricevere questa newsletter, " +
+//                            "<a href='" + unsubscribeLink + "'>clicca qui per disiscriverti</a>.</p>" +
+//                            "</body></html>";
+//
+//            helper.setText(htmlContent, true);
+//
+//            if (attachmentBytes != null && attachmentBytes.length > 0) {
+//                helper.addAttachment(attachmentFilename, new ByteArrayResource(attachmentBytes));
+//            }
+//
+//            javaMailSender.send(message);
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException("Errore nell'invio della newsletter", e);
+//        }
+//    }
 }
