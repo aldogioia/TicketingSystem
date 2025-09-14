@@ -6,6 +6,8 @@ import org.aldogioia.templatesecurity.data.dao.ExhibitionPriceDao;
 import org.aldogioia.templatesecurity.data.dao.TicketTypeDao;
 import org.aldogioia.templatesecurity.data.dto.creates.ExhibitionPriceCreateDto;
 import org.aldogioia.templatesecurity.data.dto.responses.ExhibitionPriceDto;
+import org.aldogioia.templatesecurity.data.dto.responses.ExhibitionPriceWithTicketTypeDto;
+import org.aldogioia.templatesecurity.data.dto.responses.TicketTypeDto;
 import org.aldogioia.templatesecurity.data.dto.updates.ExhibitionPriceUpdateDto;
 import org.aldogioia.templatesecurity.data.entities.Exhibition;
 import org.aldogioia.templatesecurity.data.entities.ExhibitionPrice;
@@ -33,47 +35,65 @@ public class ExhibitionPriceServiceImpl implements ExhibitionPriceService {
     }
 
     @Override
-    public ExhibitionPriceDto createExhibitionPrice(ExhibitionPriceCreateDto exhibitionPriceCreateDto) {
-        Exhibition exhibition = exhibitionDao.findById(exhibitionPriceCreateDto.getExhibitionId())
-                .orElseThrow(() -> new RuntimeException("Mostra non trovata"));
-
-        TicketType ticketType = ticketTypeDao.findById(exhibitionPriceCreateDto.getTicketTypeId())
-                .orElseThrow(() -> new RuntimeException("Tipo di biglietto non trovato"));
-
-        ExhibitionPrice exhibitionPrice = modelMapper.map(exhibitionPriceCreateDto, ExhibitionPrice.class);
-        exhibitionPrice.setExhibition(exhibition);
-        exhibitionPrice.setTicketType(ticketType);
-
-        ExhibitionPrice savedExhibitionPrice = exhibitionPriceDao.save(exhibitionPrice);
-
-        return modelMapper.map(savedExhibitionPrice, ExhibitionPriceDto.class);
+    public List<ExhibitionPriceWithTicketTypeDto> getAllExhibitionPricesWithTicketType() {
+        return exhibitionPriceDao.findAll()
+                .stream()
+                .map(exhibitionPrice -> {
+                    ExhibitionPriceWithTicketTypeDto dto = new ExhibitionPriceWithTicketTypeDto();
+                    dto.setExhibitionPrice(modelMapper.map(exhibitionPrice, ExhibitionPriceDto.class));
+                    dto.setTicketType(modelMapper.map(exhibitionPrice.getTicketType(), TicketTypeDto.class));
+                    return dto;
+                })
+                .toList();
     }
 
     @Override
-    public ExhibitionPriceDto updateExhibitionPrice(ExhibitionPriceUpdateDto exhibitionPriceUpdateDto) {
-        ExhibitionPrice exhibitionPrice = exhibitionPriceDao.findById(exhibitionPriceUpdateDto.getId())
-                .orElseThrow(() -> new RuntimeException("Prezzo della mostra non trovato"));
-
-        Exhibition exhibition = exhibitionDao.findById(exhibitionPriceUpdateDto.getExhibitionId())
+    public void createExhibitionPrice(List<ExhibitionPriceCreateDto> exhibitionPriceCreateDtos) {
+        Exhibition exhibition = exhibitionDao.findById(exhibitionPriceCreateDtos.get(0).getExhibitionId())
                 .orElseThrow(() -> new RuntimeException("Mostra non trovata"));
-        exhibitionPrice.setExhibition(exhibition);
 
-        TicketType ticketType = ticketTypeDao.findById(exhibitionPriceUpdateDto.getTicketTypeId())
-                .orElseThrow(() -> new RuntimeException("Tipo di biglietto non trovato"));
-        exhibitionPrice.setTicketType(ticketType);
+        List<ExhibitionPrice> exhibitionPrices = exhibitionPriceCreateDtos.stream()
+                .map(dto -> {
+                    TicketType ticketType = ticketTypeDao.findById(dto.getTicketTypeId())
+                            .orElseThrow(() -> new RuntimeException("Tipo di biglietto non trovato"));
 
-        modelMapper.map(exhibitionPriceUpdateDto, exhibitionPrice);
+                    ExhibitionPrice exhibitionPrice = modelMapper.map(dto, ExhibitionPrice.class);
+                    exhibitionPrice.setExhibition(exhibition);
+                    exhibitionPrice.setTicketType(ticketType);
+                    return exhibitionPrice;
+                })
+                .toList();
 
-        ExhibitionPrice updatedExhibitionPrice = exhibitionPriceDao.save(exhibitionPrice);
-
-        return modelMapper.map(updatedExhibitionPrice, ExhibitionPriceDto.class);
+        exhibitionPriceDao.saveAll(exhibitionPrices);
     }
 
     @Override
-    public void deleteExhibitionPrice(String id) {
-        ExhibitionPrice exhibitionPrice = exhibitionPriceDao.findById(id)
-                .orElseThrow(() -> new RuntimeException("Prezzo della mostra non trovato"));
+    public void updateExhibitionPrice(List<ExhibitionPriceUpdateDto> exhibitionPriceUpdateDtos) {
+        Exhibition exhibition = exhibitionDao.findById(exhibitionPriceUpdateDtos.get(0).getExhibitionId())
+                .orElseThrow(() -> new RuntimeException("Mostra non trovata"));
 
-        exhibitionPriceDao.delete(exhibitionPrice);
+        List<ExhibitionPrice> exhibitionPrices = exhibitionPriceUpdateDtos.stream()
+                .map(dto -> {
+                    ExhibitionPrice exhibitionPrice = exhibitionPriceDao.findById(dto.getId())
+                            .orElseThrow(() -> new RuntimeException("Prezzo della mostra non trovato"));
+
+                    TicketType ticketType = ticketTypeDao.findById(dto.getTicketTypeId())
+                            .orElseThrow(() -> new RuntimeException("Tipo di biglietto non trovato"));
+
+                    modelMapper.map(dto, exhibitionPrice);
+                    exhibitionPrice.setExhibition(exhibition);
+                    exhibitionPrice.setTicketType(ticketType);
+                    return exhibitionPrice;
+                })
+                .toList();
+
+        exhibitionPriceDao.saveAll(exhibitionPrices);
+    }
+
+
+    @Override
+    public void deleteExhibitionPrice(List<String> ids) {
+        List<ExhibitionPrice> exhibitionPrices = exhibitionPriceDao.findAllById(ids);
+        exhibitionPriceDao.deleteAll(exhibitionPrices);
     }
 }

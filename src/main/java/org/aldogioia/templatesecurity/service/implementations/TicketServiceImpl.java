@@ -4,17 +4,19 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.aldogioia.templatesecurity.data.dao.ExhibitionPriceDao;
 import org.aldogioia.templatesecurity.data.dao.TicketDao;
-import org.aldogioia.templatesecurity.data.dao.UserDao;
 import org.aldogioia.templatesecurity.data.dto.creates.TicketCreateDto;
 import org.aldogioia.templatesecurity.data.dto.responses.TicketDto;
+import org.aldogioia.templatesecurity.data.dto.responses.TicketsPdfDto;
 import org.aldogioia.templatesecurity.data.entities.ExhibitionPrice;
 import org.aldogioia.templatesecurity.data.entities.Ticket;
 import org.aldogioia.templatesecurity.data.entities.User;
 import org.aldogioia.templatesecurity.data.enumerators.TicketStatus;
+import org.aldogioia.templatesecurity.security.exception.customException.EmailException;
 import org.aldogioia.templatesecurity.security.exception.customException.EntityNotFoundException;
 import org.aldogioia.templatesecurity.security.exception.customException.TicketExpiredException;
 import org.aldogioia.templatesecurity.service.interfaces.EmailService;
 import org.aldogioia.templatesecurity.service.interfaces.TicketService;
+import org.aldogioia.templatesecurity.utils.PdfGenerator;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -25,10 +27,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TicketServiceImpl implements TicketService {
-    private final UserDao userDao;
     private final TicketDao ticketDao;
     private final ExhibitionPriceDao exhibitionPriceDao;
     private final EmailService emailService;
+    private final PdfGenerator pdfGenerator;
     private final ModelMapper modelMapper;
 
     @Override
@@ -40,27 +42,52 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketDto createTicket(TicketCreateDto ticketCreateDto) {
-        ExhibitionPrice exhibitionPrice = exhibitionPriceDao.findById(ticketCreateDto.getExhibitionPriceId())
-                .orElseThrow(() -> new EntityNotFoundException("Prezzo della mostra non trovato"));
+    public TicketsPdfDto createTicket(List<TicketCreateDto> ticketCreateDtos, User user) {
+        List<ExhibitionPrice> exhibitionPrices = exhibitionPriceDao.findAllById(ticketCreateDtos.stream()
+                .map(TicketCreateDto::getExhibitionPriceId)
+                .toList());
 
-        User user = userDao.findById(ticketCreateDto.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
+        List<Ticket> tickets = ticketCreateDtos.stream()
+                .flatMap(ticketDto -> {
+                    ExhibitionPrice exhibitionPrice = exhibitionPrices.stream()
+                            .filter(price -> price.getId().equals(ticketDto.getExhibitionPriceId()))
+                            .findFirst()
+                            .orElseThrow(() -> new EntityNotFoundException("Prezzo per la mostra non trovato"));
 
-        Ticket ticket = modelMapper.map(ticketCreateDto, Ticket.class);
-        ticket.setPriceAtPurchase(exhibitionPrice.getPrice());
-        ticket.setExhibitionPrice(exhibitionPrice);
-        ticket.setUser(user);
+                    return java.util.stream.IntStream.range(0, ticketDto.getQuantity())
+                            .mapToObj(i -> {
+                                Ticket newTicket = modelMapper.map(ticketDto, Ticket.class);
+                                newTicket.setExhibitionPrice(exhibitionPrice);
+                                newTicket.setPriceAtPurchase(exhibitionPrice.getPrice());
+                                newTicket.setExhibitionTitle(exhibitionPrice.getExhibition().getTitle());
+                                newTicket.setTicketType(exhibitionPrice.getTicketType().getName());
+                                newTicket.setUser(user);
+                                return newTicket;
+                            });
+                })
+                .toList();
 
-        Ticket savedTicket = ticketDao.save(ticket);
+        List<Ticket> savedTickets = ticketDao.saveAll(tickets);
 
-        emailService.sendTicketEmail(user.getEmail(), ticket);
+        TicketsPdfDto ticketsPdfDto = new TicketsPdfDto();
 
-        return modelMapper.map(savedTicket, TicketDto.class);
+        try {
+            ticketsPdfDto.setPdf(pdfGenerator.generatePdfTickets(tickets));
+        } catch (Exception e) {
+            throw new EmailException("Errore durante la generazione dei biglietti. Riprovare Grazie.");
+        }
+
+//        emailService.sendTicketEmail(user.getEmail(), savedTickets);
+
+        ticketsPdfDto.setTickets(savedTickets.stream()
+                .map(ticket -> modelMapper.map(ticket, TicketDto.class))
+                .toList());
+
+        return ticketsPdfDto;
     }
 
     @Override
-    public void invalidateTicket(String id) {
+    public TicketDto invalidateTicket(String id) {
         Ticket ticket = ticketDao.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Biglietto non trovato"));
 
@@ -69,6 +96,8 @@ public class TicketServiceImpl implements TicketService {
         } else {
             ticket.setStatus(TicketStatus.INVALID);
             ticketDao.save(ticket);
+
+            return modelMapper.map(ticket, TicketDto.class);
         }
     }
 

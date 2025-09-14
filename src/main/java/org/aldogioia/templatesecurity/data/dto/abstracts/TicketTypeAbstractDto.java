@@ -1,6 +1,7 @@
 package org.aldogioia.templatesecurity.data.dto.abstracts;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.aldogioia.templatesecurity.security.customAnnotation.ValidTicketTypeName;
@@ -12,7 +13,6 @@ public abstract class TicketTypeAbstractDto {
     @ValidTicketTypeName
     private String name;
 
-    @NotBlank(message = "La descrizione è obbligatoria")
-    @Size(min = 1, message = "La descrizione dev'essere lunga almeno 1 carattere")
-    private String description;
+    @NotNull(message = "È obbligatorio specificare se l'accesso multiplo è consentito")
+    private Boolean isMultipleEntryAllowed;
 }

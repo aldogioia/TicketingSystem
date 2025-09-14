@@ -4,9 +4,12 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.aldogioia.templatesecurity.security.logging.Auditable;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -22,6 +25,10 @@ public class TicketType extends Auditable {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "is_multiple_entry_allowed", nullable = false)
+    private Boolean isMultipleEntryAllowed;
+
+    @OneToMany(mappedBy = "ticketType", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<ExhibitionPrice> exhibitionPrices;
 }

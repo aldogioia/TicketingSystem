@@ -62,6 +62,9 @@ public class ModelMapperConfig {
                 skip(destination.getExhibitionPrice());
                 skip(destination.getUser());
 
+                using(ctx -> ctx.getSource() == null ? 1 : ctx.getSource())
+                        .map(source.getPeopleNumber(), destination.getPeopleNumber());
+
                 map().setIssuedOn(LocalDateTime.now());
                 map().setStatus(TicketStatus.VALID);
             }

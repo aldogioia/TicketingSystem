@@ -28,9 +28,6 @@ public class Exhibition extends Auditable {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
-    private String description;
-
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 

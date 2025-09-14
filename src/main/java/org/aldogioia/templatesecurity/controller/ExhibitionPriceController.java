@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.aldogioia.templatesecurity.data.dto.creates.ExhibitionPriceCreateDto;
 import org.aldogioia.templatesecurity.data.dto.responses.ExhibitionPriceDto;
+import org.aldogioia.templatesecurity.data.dto.responses.ExhibitionPriceWithTicketTypeDto;
 import org.aldogioia.templatesecurity.data.dto.updates.ExhibitionPriceUpdateDto;
 import org.aldogioia.templatesecurity.security.availability.RateLimit;
 import org.aldogioia.templatesecurity.service.interfaces.ExhibitionPriceService;
@@ -30,26 +31,36 @@ public class ExhibitionPriceController {
                 .body(exhibitionPriceDtoList);
     }
 
+    @GetMapping("/get-all-with-ticket-type")
+    public ResponseEntity<List<ExhibitionPriceWithTicketTypeDto>> getAllExhibitionPricesWithTicketType() {
+        List<ExhibitionPriceWithTicketTypeDto> exhibitionPriceDtoList = exhibitionPriceService.getAllExhibitionPricesWithTicketType();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(exhibitionPriceDtoList);
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<ExhibitionPriceDto> createExhibitionPrice(@Valid @RequestBody ExhibitionPriceCreateDto exhibitionPriceCreateDto) {
+    public ResponseEntity<ExhibitionPriceDto> createExhibitionPrice(@Valid @RequestBody List<ExhibitionPriceCreateDto> exhibitionPriceCreateDtos) {
+        exhibitionPriceService.createExhibitionPrice(exhibitionPriceCreateDtos);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(exhibitionPriceService.createExhibitionPrice(exhibitionPriceCreateDto));
+                .build();
     }
 
     @PutMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<ExhibitionPriceDto> updateExhibitionPrice(@Valid @RequestBody ExhibitionPriceUpdateDto exhibitionPriceUpdateDto) {
+    public ResponseEntity<ExhibitionPriceDto> updateExhibitionPrice(@Valid @RequestBody List<ExhibitionPriceUpdateDto> exhibitionPriceUpdateDtos) {
+        exhibitionPriceService.updateExhibitionPrice(exhibitionPriceUpdateDtos);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(exhibitionPriceService.updateExhibitionPrice(exhibitionPriceUpdateDto));
+                .build();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Void> deleteExhibitionPrice(@PathVariable String id) {
-        exhibitionPriceService.deleteExhibitionPrice(id);
+    public ResponseEntity<Void> deleteExhibitionPrice(@RequestBody List<String> ids) {
+        exhibitionPriceService.deleteExhibitionPrice(ids);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();

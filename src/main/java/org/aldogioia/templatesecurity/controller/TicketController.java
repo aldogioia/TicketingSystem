@@ -4,10 +4,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.aldogioia.templatesecurity.data.dto.creates.TicketCreateDto;
 import org.aldogioia.templatesecurity.data.dto.responses.TicketDto;
+import org.aldogioia.templatesecurity.data.dto.responses.TicketsPdfDto;
+import org.aldogioia.templatesecurity.security.CustomUserDetails;
 import org.aldogioia.templatesecurity.security.availability.RateLimit;
 import org.aldogioia.templatesecurity.service.interfaces.TicketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,18 +31,17 @@ public class TicketController {
     }
 
     @PostMapping
-    public ResponseEntity<TicketDto> createTicket(@Valid @RequestBody TicketCreateDto ticketCreateDto) {
+    public ResponseEntity<TicketsPdfDto> createTicket(@Valid @RequestBody List<TicketCreateDto> ticketCreateDtos, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ticketService.createTicket(ticketCreateDto));
+                .body(ticketService.createTicket(ticketCreateDtos, customUserDetails.user()));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<HttpStatus> invalidateTicket(@PathVariable String id) {
-        ticketService.invalidateTicket(id);
+    public ResponseEntity<TicketDto> invalidateTicket(@PathVariable String id) {
         return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .build();
+                .status(HttpStatus.OK)
+                .body(ticketService.invalidateTicket(id));
     }
 
     @DeleteMapping("/{id}")

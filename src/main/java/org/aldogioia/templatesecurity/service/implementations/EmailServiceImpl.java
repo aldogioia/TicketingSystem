@@ -12,6 +12,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
@@ -47,10 +49,14 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendConfirmNewsletterSubscribe(String email) {
-        String textContent = "Grazie per esserti iscritto alla nostra newsletter!\n" +
-                "Riceverai aggiornamenti sulle nostre mostre e eventi.\n\n" +
-                "Se non hai richiesto questa operazione, ignora questa email.\n\n" +
-                "Grazie";
+        String textContent = """
+                Grazie per esserti iscritto alla nostra newsletter!\
+                
+                 Riceverai aggiornamenti sulle nostre mostre e eventi.
+                
+                Se non hai richiesto questa operazione, ignora questa email.
+                
+                Grazie""";
 
         try {
             sendEmail(textContent, email, "Conferma Iscrizione Newsletter");
@@ -64,19 +70,17 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendTicketEmail(String email, Ticket ticket) {
-        String textContent = "Ciao, " + ticket.getUser().getName() +".\n\n" +
-                "Hai acquistato un biglietto per la mostra: " +
-                ticket.getExhibitionPrice().getExhibition().getTitle() + ".\n"+
-                "In allegato trovi il tuo biglietto in formato PDF.\n\nGrazie e a presto!\n\n\n\n";
+    public void sendTicketEmail(String email, List<Ticket> tickets) {
+        String textContent = "Ciao.\n\n" +
+                "Hai acquistato " + tickets.size() + " biglietti per la mostra: " +
+                tickets.get(0).getExhibitionPrice().getExhibition().getTitle() + ".\n" +
+                "In allegato trovi i tuoi biglietti in formato PDF.\n\nGrazie e a presto!\n\n\n\n";
 
         try {
-            byte[] pdfBytes = pdfGenerator.generatePdfTicket(ticket);
-
+            byte[] pdfBytes = pdfGenerator.generatePdfTickets(tickets);
             sendEmailWithAttachment(textContent, email, pdfBytes);
-
         } catch (Exception e) {
-            throw new EmailException("Errore durante l'invio dell'email del biglietto");
+            throw new EmailException("Errore durante l'invio dell'email dei biglietti");
         }
     }
 

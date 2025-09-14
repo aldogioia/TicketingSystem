@@ -4,7 +4,8 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.aldogioia.templatesecurity.data.dao.UserDao;
-import org.aldogioia.templatesecurity.data.dto.responses.AuthResponseDto;
+import org.aldogioia.templatesecurity.data.dto.responses.RefreshResponseDto;
+import org.aldogioia.templatesecurity.data.dto.responses.SignInResponseDto;
 import org.aldogioia.templatesecurity.data.dto.creates.CustomerCreateDto;
 import org.aldogioia.templatesecurity.data.entities.User;
 import org.aldogioia.templatesecurity.data.enumerators.TokenType;
@@ -27,14 +28,14 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public AuthResponseDto signIn(String email, String password) {
+    public SignInResponseDto signIn(String email, String password) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password));
 
         User user = userDao.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
 
-        AuthResponseDto authResponseDto = new AuthResponseDto();
+        SignInResponseDto authResponseDto = new SignInResponseDto();
         authResponseDto.setAccessToken(jwtHandler.generateAccessToken(user));
         authResponseDto.setRefreshToken(jwtHandler.generateRefreshToken(user));
 
@@ -47,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String refresh(HttpServletRequest request) {
+    public RefreshResponseDto refresh(HttpServletRequest request) {
         String refreshToken = jwtHandler.getJwtFromRequest(request, TokenType.REFRESH);
 
         if (blacklistService.isTokenBlacklisted(refreshToken)) {
@@ -63,7 +64,9 @@ public class AuthServiceImpl implements AuthService {
             var user = userDao.findByEmail(email)
                     .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
 
-            return jwtHandler.generateAccessToken(user);
+            RefreshResponseDto refreshResponseDto = new RefreshResponseDto();
+            refreshResponseDto.setAccessToken(jwtHandler.generateAccessToken(user));
+            return refreshResponseDto;
         }
         catch (Exception e) {
             throw new TokenException("Errore durante il refresh del token");

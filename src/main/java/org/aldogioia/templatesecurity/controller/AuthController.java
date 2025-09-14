@@ -4,7 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import org.aldogioia.templatesecurity.data.dto.responses.AuthResponseDto;
+import org.aldogioia.templatesecurity.data.dto.responses.RefreshResponseDto;
+import org.aldogioia.templatesecurity.data.dto.responses.SignInResponseDto;
 import org.aldogioia.templatesecurity.data.dto.creates.CustomerCreateDto;
 import org.aldogioia.templatesecurity.security.availability.RateLimit;
 import org.aldogioia.templatesecurity.service.interfaces.AuthService;
@@ -23,7 +24,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/sign-in")
-    public ResponseEntity<AuthResponseDto> signIn(
+    public ResponseEntity<SignInResponseDto> signIn(
             @NotBlank(message = "L'email è obbligatoria") @RequestParam String email,
             @NotBlank(message = "La password è obbligatoria") @RequestParam String password
     ) {
@@ -41,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<String> refreshToken(HttpServletRequest request) {
+    public ResponseEntity<RefreshResponseDto> refreshToken(HttpServletRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(authService.refresh(request));

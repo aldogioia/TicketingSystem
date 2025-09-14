@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.aldogioia.templatesecurity.data.enumerators.TicketStatus;
 import org.aldogioia.templatesecurity.security.logging.Auditable;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -36,8 +38,18 @@ public class Ticket extends Auditable {
     @Column(name= "price_at_purchase", nullable = false)
     private Double priceAtPurchase;
 
+    @Column(name= "exhibition_title", nullable = false)
+    private String exhibitionTitle;
+
+    @Column(name = "ticket_type_name", nullable = false)
+    private String ticketType;
+
+    @Column(name = "people_number", nullable = false)
+    private Integer peopleNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exhibition_price_id", nullable = false)
+    @JoinColumn(name = "exhibition_price_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @ToString.Exclude
     private ExhibitionPrice exhibitionPrice;
 

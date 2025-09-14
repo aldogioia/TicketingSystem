@@ -12,10 +12,6 @@ public abstract class ExhibitionAbstractDto {
     @Size(min = 1, max = 100, message = "Il titolo deve essere compreso tra 1 e 100 caratteri")
     private String title;
 
-    @NotBlank(message = "La descrizione è obbligatoria")
-    @Size(min = 1, message = "La descrizione deve essere di almeno 1 carattere")
-    private String description;
-
     @NotNull(message = "La data di inizio è obbligatoria")
     @FutureOrPresent(message = "La data di inizio deve essere oggi o una data futura")
     private LocalDate startDate;
