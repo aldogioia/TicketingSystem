@@ -10,6 +10,7 @@ import org.aldogioia.templatesecurity.security.availability.RateLimit;
 import org.aldogioia.templatesecurity.service.interfaces.TicketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,7 @@ public class TicketController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<TicketsPdfDto> createTicket(@Valid @RequestBody List<TicketCreateDto> ticketCreateDtos, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -38,6 +40,7 @@ public class TicketController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_VALIDATOR')")
     public ResponseEntity<TicketDto> invalidateTicket(@PathVariable String id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -45,6 +48,7 @@ public class TicketController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<HttpStatus> deleteTicket(@PathVariable String id) {
         ticketService.deleteTicket(id);
         return ResponseEntity

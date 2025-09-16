@@ -14,7 +14,6 @@ import org.aldogioia.templatesecurity.data.enumerators.TicketStatus;
 import org.aldogioia.templatesecurity.security.exception.customException.EmailException;
 import org.aldogioia.templatesecurity.security.exception.customException.EntityNotFoundException;
 import org.aldogioia.templatesecurity.security.exception.customException.TicketExpiredException;
-import org.aldogioia.templatesecurity.service.interfaces.EmailService;
 import org.aldogioia.templatesecurity.service.interfaces.TicketService;
 import org.aldogioia.templatesecurity.utils.PdfGenerator;
 import org.modelmapper.ModelMapper;
@@ -29,7 +28,6 @@ import java.util.List;
 public class TicketServiceImpl implements TicketService {
     private final TicketDao ticketDao;
     private final ExhibitionPriceDao exhibitionPriceDao;
-    private final EmailService emailService;
     private final PdfGenerator pdfGenerator;
     private final ModelMapper modelMapper;
 
@@ -77,8 +75,6 @@ public class TicketServiceImpl implements TicketService {
             throw new EmailException("Errore durante la generazione dei biglietti. Riprovare Grazie.");
         }
 
-//        emailService.sendTicketEmail(user.getEmail(), savedTickets);
-
         ticketsPdfDto.setTickets(savedTickets.stream()
                 .map(ticket -> modelMapper.map(ticket, TicketDto.class))
                 .toList());
@@ -109,7 +105,7 @@ public class TicketServiceImpl implements TicketService {
         ticketDao.delete(ticket);
     }
 
-    @Scheduled(cron = "0 0 3 * * *")
+    @Scheduled(cron = "0 0 9 * * *")
     @Transactional
     public void updateTicketStatus() {
         ticketDao.findByExhibitionPrice_Exhibition_EndDateBeforeAndStatus(LocalDate.now(), TicketStatus.VALID)

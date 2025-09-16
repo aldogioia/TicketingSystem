@@ -41,6 +41,28 @@ public class AuthController {
                 .build();
     }
 
+    @PostMapping("/update-request")
+    public ResponseEntity<HttpStatus> update(
+            @NotBlank(message = "L'email è obbligatoria") @RequestParam String email
+    ) {
+        authService.updateRequest(email);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<SignInResponseDto> update(
+            @NotBlank(message = "L'email è obbligatoria") @RequestParam String email,
+            @NotBlank(message = "La password è obbligatoria") @RequestParam String password,
+            @NotBlank(message = "Codice di verifica") @RequestParam String code
+    ) {
+        authService.updatePassword(email, password, code);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
+    }
+
     @PostMapping("/refresh")
     public ResponseEntity<RefreshResponseDto> refreshToken(HttpServletRequest request) {
         return ResponseEntity

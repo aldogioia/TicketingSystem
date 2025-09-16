@@ -22,10 +22,17 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendRecoveryPasswordCode(String email, String code) {
-        String textContent = "Abbiamo ricevuto una richiesta per reimpostare la tua password.\n" +
-                "Questo e il codice di verifica: "+ code + "\n\n" +
-                "Se non hai richiesto questa operazione, ignora questa email.\n\n" +
-                "Grazie";
+        String textContent = """
+            Abbiamo ricevuto una richiesta per reimpostare la tua password.
+        
+            Questo è il codice di verifica: %s.
+        
+            Scadrà entro 10 minuti.
+        
+            Se non hai richiesto questa operazione, ignora questa email.
+        
+            Grazie
+            """.formatted(code);
 
         try {
             sendEmail(textContent, email, "Reset Password");

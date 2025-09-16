@@ -14,8 +14,10 @@ import org.aldogioia.templatesecurity.security.exception.customException.TokenEx
 import org.aldogioia.templatesecurity.service.interfaces.AuthService;
 import org.aldogioia.templatesecurity.service.interfaces.BlacklistService;
 import org.aldogioia.templatesecurity.service.interfaces.CustomerService;
+import org.aldogioia.templatesecurity.service.interfaces.PasswordCodeService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +28,8 @@ public class AuthServiceImpl implements AuthService {
     private final CustomerService customerService;
     private final BlacklistService blacklistService;
     private final AuthenticationManager authenticationManager;
+    private final PasswordCodeService passwordCodeService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public SignInResponseDto signIn(String email, String password) {
@@ -45,6 +49,24 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void signUp(CustomerCreateDto customerCreateDto) {
         customerService.createCustomer(customerCreateDto);
+    }
+
+    @Override
+    public void updateRequest(String email) {
+        passwordCodeService.createCode(email);
+    }
+
+    @Override
+    public void updatePassword(String email, String password, String code) {
+        if (!passwordCodeService.validateCode(email, code)) {
+            throw new TokenException("Codice di verifica non valido o scaduto");
+        }
+
+        User user = userDao.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
+
+        user.setPassword(passwordEncoder.encode(password));
+        userDao.save(user);
     }
 
     @Override

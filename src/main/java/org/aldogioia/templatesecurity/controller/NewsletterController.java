@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class NewsletterController {
     private final NewsletterService newsletterService;
 
-
-
     @PostMapping("/subscribe")
     public ResponseEntity<HttpStatus> subscribeToNewsletter(
             @Email @RequestParam String email

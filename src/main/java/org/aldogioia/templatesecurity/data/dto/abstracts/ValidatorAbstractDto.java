@@ -5,5 +5,5 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public abstract class CustomerAbstractDto extends  UserAbstractDto {
+public class ValidatorAbstractDto extends UserAbstractDto {
 }

@@ -8,6 +8,8 @@ import org.aldogioia.templatesecurity.data.dto.creates.CustomerCreateDto;
 public interface AuthService {
     SignInResponseDto signIn(String email, String password);
     void signUp(CustomerCreateDto customerCreateDto);
+    void updateRequest(String email);
+    void updatePassword(String email, String password,String code);
     RefreshResponseDto refresh(HttpServletRequest request);
     void signOut(HttpServletRequest request);
 }
