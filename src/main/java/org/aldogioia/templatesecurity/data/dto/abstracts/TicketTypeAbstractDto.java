@@ -7,10 +7,10 @@ import lombok.Data;
 import org.aldogioia.templatesecurity.security.customAnnotation.ValidTicketTypeName;
 
 @Data
+@ValidTicketTypeName
 public abstract class TicketTypeAbstractDto {
     @NotBlank(message = "Il nome è obbligatorio")
     @Size(min = 1, max = 50, message = "Il nome dev'essere compreso tra 1 e 50 caratteri")
-    @ValidTicketTypeName
     private String name;
 
     @NotNull(message = "È obbligatorio specificare se l'accesso multiplo è consentito")

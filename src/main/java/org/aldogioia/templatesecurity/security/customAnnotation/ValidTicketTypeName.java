@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Constraint(validatedBy = TicketTypeNameValidator.class)
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidTicketTypeName {
     String message() default "Il nome del tipo di biglietto è già in uso";

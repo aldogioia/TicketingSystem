@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.aldogioia.templatesecurity.data.dto.creates.CustomerCreateDto;
 import org.aldogioia.templatesecurity.data.dto.creates.ExhibitionPriceCreateDto;
 import org.aldogioia.templatesecurity.data.dto.creates.TicketCreateDto;
+import org.aldogioia.templatesecurity.data.dto.creates.ValidatorCreateDto;
 import org.aldogioia.templatesecurity.data.entities.Customer;
 import org.aldogioia.templatesecurity.data.entities.ExhibitionPrice;
 import org.aldogioia.templatesecurity.data.entities.Ticket;
+import org.aldogioia.templatesecurity.data.entities.Validator;
 import org.aldogioia.templatesecurity.data.enumerators.Role;
 import org.aldogioia.templatesecurity.data.enumerators.TicketStatus;
 import org.modelmapper.Converter;
@@ -40,6 +42,15 @@ public class ModelMapperConfig {
             @Override
             protected void configure() {
                 map().setRole(Role.ROLE_CUSTOMER);
+                using(passwordConverter).map(source.getPassword(), destination.getPassword());
+            }
+        });
+
+        //mappatura per la creazione di un validator
+        modelMapper.addMappings(new PropertyMap<ValidatorCreateDto, Validator>() {
+            @Override
+            protected void configure() {
+                map().setRole(Role.ROLE_VALIDATOR);
                 using(passwordConverter).map(source.getPassword(), destination.getPassword());
             }
         });

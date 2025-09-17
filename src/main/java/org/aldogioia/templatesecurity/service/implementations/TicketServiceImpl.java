@@ -14,6 +14,7 @@ import org.aldogioia.templatesecurity.data.enumerators.TicketStatus;
 import org.aldogioia.templatesecurity.security.exception.customException.EmailException;
 import org.aldogioia.templatesecurity.security.exception.customException.EntityNotFoundException;
 import org.aldogioia.templatesecurity.security.exception.customException.TicketExpiredException;
+import org.aldogioia.templatesecurity.security.exception.customException.TicketInvalidException;
 import org.aldogioia.templatesecurity.service.interfaces.TicketService;
 import org.aldogioia.templatesecurity.utils.PdfGenerator;
 import org.modelmapper.ModelMapper;
@@ -89,6 +90,9 @@ public class TicketServiceImpl implements TicketService {
 
         if (ticket.getStatus().name().equals(TicketStatus.EXPIRED.name())) {
             throw new TicketExpiredException("Il biglietto è già scaduto e non può essere invalidato.");
+        }
+        else if (ticket.getStatus().name().equals(TicketStatus.INVALID.name())) {
+            throw new TicketInvalidException("Il biglietto è già stato invalidato.");
         } else {
             ticket.setStatus(TicketStatus.INVALID);
             ticketDao.save(ticket);

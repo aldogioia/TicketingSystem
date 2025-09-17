@@ -30,7 +30,7 @@ public class PdfGenerator {
             builder.useFastMode();
 
             String logoBase64 = Base64Converter.imageUrlToBase64("https://museo-multimediale-cosenza.s3.eu-north-1.amazonaws.com/logo.png");
-            String bannerBase64 = Base64Converter.imageUrlToBase64("https://museo-multimediale-cosenza.s3.eu-north-1.amazonaws.com/AD-banner.jpg");
+            String bannerBase64 = Base64Converter.imageUrlToBase64("https://museo-multimediale-cosenza.s3.eu-north-1.amazonaws.com/AD-mostra.jpeg");
 
             List<CompletableFuture<String>> qrFutures = tickets.stream()
                     .map(ticket -> CompletableFuture.supplyAsync(() -> {
@@ -100,7 +100,7 @@ public class PdfGenerator {
         context.setVariable("price", String.format("%.2f", ticket.getPriceAtPurchase()).replace('.', ',') + " €");
         context.setVariable("times", "Dalle " + exhibition.getStartTime() + " alle " + exhibition.getEndTime());
         context.setVariable("entries", "Valido per l'ingresso di " + ticket.getPeopleNumber() + " person" + (ticket.getPeopleNumber() > 1 ? "e" : "a"));
-        context.setVariable("duration", exhibition.getDuration());
+        context.setVariable("duration", exhibition.getDuration() + " minuti");
         context.setVariable("bannerUrl", bannerBase64);
         context.setVariable("qrCodeBase64", qrBase64);
         context.setVariable("logoUrl", logoBase64);
