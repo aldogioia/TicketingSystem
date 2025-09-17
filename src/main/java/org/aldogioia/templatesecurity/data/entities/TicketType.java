@@ -28,6 +28,9 @@ public class TicketType extends Auditable {
     @Column(name = "is_multiple_entry_allowed", nullable = false)
     private Boolean isMultipleEntryAllowed;
 
+    @Column(name = "is_price_per_person", nullable = false)
+    private Boolean isPricePerPerson;
+
     @OneToMany(mappedBy = "ticketType", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<ExhibitionPrice> exhibitionPrices;

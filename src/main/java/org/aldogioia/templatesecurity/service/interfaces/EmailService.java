@@ -1,14 +1,6 @@
 package org.aldogioia.templatesecurity.service.interfaces;
 
-import jakarta.mail.MessagingException;
-import org.aldogioia.templatesecurity.data.entities.Ticket;
-
-import java.util.List;
-
 public interface EmailService {
-    void sendRecoveryPasswordCode(String email, String code) throws MessagingException;
+    void sendRecoveryPasswordCode(String email, String code);
     void sendVerificationEmail(String email, String code);
-    void sendConfirmNewsletterSubscribe(String email);
-    void sendNewsletterEmail();
-    void sendTicketEmail(String email, List<Ticket> tickets);
 }

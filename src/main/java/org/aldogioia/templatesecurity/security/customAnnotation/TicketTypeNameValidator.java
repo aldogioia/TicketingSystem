@@ -10,11 +10,10 @@ import org.aldogioia.templatesecurity.data.dto.updates.TicketTypeUpdateDto;
 
 @RequiredArgsConstructor
 public class TicketTypeNameValidator implements ConstraintValidator<ValidTicketTypeName, TicketTypeAbstractDto> {
-
     private final TicketTypeDao ticketTypeDao;
 
     @Override
-    public boolean isValid(TicketTypeAbstractDto dto, ConstraintValidatorContext context) {
+    public boolean isValid(TicketTypeAbstractDto dto, ConstraintValidatorContext constraintValidatorContext) {
         if (dto == null || dto.getName() == null) {
             return true;
         }
@@ -29,9 +28,9 @@ public class TicketTypeNameValidator implements ConstraintValidator<ValidTicketT
         }
 
         if (!valid) {
-            context.disableDefaultConstraintViolation();
+            constraintValidatorContext.disableDefaultConstraintViolation();
 
-            context.buildConstraintViolationWithTemplate("Il nome '" + name + "' è già in uso")
+            constraintValidatorContext.buildConstraintViolationWithTemplate("Il nome '" + name + "' è già in uso")
                     .addPropertyNode("name")
                     .addConstraintViolation();
         }

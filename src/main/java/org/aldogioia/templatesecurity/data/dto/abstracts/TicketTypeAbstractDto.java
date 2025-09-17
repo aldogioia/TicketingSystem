@@ -4,10 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.aldogioia.templatesecurity.security.customAnnotation.ValidBooleanFieldsSelected;
 import org.aldogioia.templatesecurity.security.customAnnotation.ValidTicketTypeName;
 
 @Data
 @ValidTicketTypeName
+@ValidBooleanFieldsSelected
 public abstract class TicketTypeAbstractDto {
     @NotBlank(message = "Il nome è obbligatorio")
     @Size(min = 1, max = 50, message = "Il nome dev'essere compreso tra 1 e 50 caratteri")
@@ -15,4 +17,7 @@ public abstract class TicketTypeAbstractDto {
 
     @NotNull(message = "È obbligatorio specificare se l'accesso multiplo è consentito")
     private Boolean isMultipleEntryAllowed;
+
+    @NotNull(message = "È obbligatorio specificare se il prezzo va moltiplicato per il numero di persone")
+    private Boolean isPricePerPerson;
 }

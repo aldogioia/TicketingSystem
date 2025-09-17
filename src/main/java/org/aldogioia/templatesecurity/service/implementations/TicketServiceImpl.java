@@ -57,7 +57,11 @@ public class TicketServiceImpl implements TicketService {
                             .mapToObj(i -> {
                                 Ticket newTicket = modelMapper.map(ticketDto, Ticket.class);
                                 newTicket.setExhibitionPrice(exhibitionPrice);
-                                newTicket.setPriceAtPurchase(exhibitionPrice.getPrice());
+                                if (exhibitionPrice.getTicketType().getIsPricePerPerson()) {
+                                    newTicket.setPriceAtPurchase(exhibitionPrice.getPrice() * ticketDto.getPeopleNumber());
+                                } else {
+                                    newTicket.setPriceAtPurchase(exhibitionPrice.getPrice());
+                                }
                                 newTicket.setExhibitionTitle(exhibitionPrice.getExhibition().getTitle());
                                 newTicket.setTicketType(exhibitionPrice.getTicketType().getName());
                                 newTicket.setUser(user);

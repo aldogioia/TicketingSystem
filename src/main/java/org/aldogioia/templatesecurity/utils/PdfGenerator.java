@@ -96,7 +96,7 @@ public class PdfGenerator {
         context.setVariable("endDate", exhibition.getEndDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         context.setVariable("issuedOn", ticket.getIssuedOn().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         context.setVariable("expireOn", exhibition.getEndDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        context.setVariable("ticketType", ticket.getExhibitionPrice().getTicketType().getName());
+        context.setVariable("ticketType", ticket.getExhibitionTitle());
         context.setVariable("price", String.format("%.2f", ticket.getPriceAtPurchase()).replace('.', ',') + " €");
         context.setVariable("times", "Dalle " + exhibition.getStartTime() + " alle " + exhibition.getEndTime());
         context.setVariable("entries", "Valido per l'ingresso di " + ticket.getPeopleNumber() + " person" + (ticket.getPeopleNumber() > 1 ? "e" : "a"));
