@@ -1,0 +1,275 @@
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 32pt;
+  padding: 24pt;
+  border-radius: 32pt;
+  border: 1px solid var(--stroke-weak);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 24pt;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8pt;
+  border-radius: 8pt;
+  gap: 8pt;
+  transition: .3s ease-in-out;
+}
+
+.item:hover {
+  background: var(--fill);
+}
+
+.item > p {
+  color: var(--text-strong);
+}
+
+.item svg {
+  fill: var(--stroke-strong);
+  cursor: pointer;
+  transition: .3s ease-in-out;
+}
+
+.item svg:hover {
+  fill: var(--brand-strong);
+}
+
+.column:hover > .item:not(:hover) {
+  opacity: 0.6;
+}
+
+.column.compact{
+  gap: 8pt;
+}
+
+.input-group {
+  display: flex;
+  gap: 8pt;
+  width: 100%;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4pt;
+  flex: 1;
+  width: 100%;
+}
+
+.input-wrapper > label,
+.column.compact > label{
+  margin-left: 4pt;
+}
+
+.input-wrapper > span {
+  margin-left: 4pt;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+}
+
+.input-wrapper > .row {
+  padding: 0 4pt;
+  justify-content: space-between;
+  width: 100%;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="date"],
+input[type="time"],
+input[type="number"],
+select {
+  background-color: var(--fill);
+  border: 1pt solid var(--stroke-strong);
+  border-radius: 8pt;
+  color: var(--text-strong);
+  padding: 16pt;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+select {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="date"],
+input[type="time"] {
+  text-align: center;
+}
+
+input::placeholder,
+input[type="text"]::placeholder,
+input[type="password"]::placeholder,
+input[type="email"]::placeholder,
+input[type="date"]::placeholder,
+input[type="time"]::placeholder,
+input[type="number"] {
+  color: var(--text-weak);
+  opacity: 1;
+}
+
+input:hover,
+select:hover {
+  border-color: var(--brand-stroke-weak);
+}
+
+input:focus,
+select:focus {
+  border-color: var(--brand-stroke-strong);
+}
+
+input:disabled,
+select:disabled {
+  border-color: var(--stroke-weak);
+  color: var(--text-weak);
+  cursor: not-allowed;
+}
+
+input.error,
+select.error {
+  border-color: var(--error-stroke-strong);
+}
+
+input.correct,
+select.correct {
+  border-color: var(--success-stroke-strong);
+}
+
+.message-error {
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  color: var(--error-strong);
+}
+
+button {
+  background: var(--brand-weak);
+  border-radius: 8px;
+  color: var(--background);
+  padding: 16pt;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: .3s ease-in-out;
+}
+
+button:hover {
+  background: var(--brand-strong);
+}
+
+button:focus {
+  background: var(--brand-stroke-strong);
+}
+
+button:disabled {
+  background: var(--brand-fill);
+  cursor: not-allowed;
+}
+
+.secondary-button {
+  background: none;
+  border: 1pt solid var(--brand-stroke-weak);
+  color: var(--brand-strong);
+  width: 100%;
+}
+
+.secondary-button:hover {
+  border-color: var(--brand-stroke-strong);
+  background: none;
+}
+
+.secondary-button:focus {
+  background: var(--brand-fill);
+}
+
+.secondary-button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.secondary-button:disabled {
+  border-color: var(--stroke-weak);
+  color: var(--brand-weak);
+  cursor: not-allowed;
+}
+
+.secondary-button.error {
+  border: 1pt solid var(--error-stroke-weak);
+  color: var(--error-strong);
+}
+
+.secondary-button.error:hover {
+  border-color: var(--error-stroke-strong);
+}
+
+.secondary-button.error:focus {
+  background: var(--error-fill);
+}
+
+.secondary-button.error:disabled {
+  border-color: var(--stroke-weak);
+  color: var(--error-weak);
+  cursor: not-allowed;
+}
+
+.radio-button {
+  display: flex;
+  flex-direction: column;
+  gap: 2pt;
+  width: 100%;
+  flex: 1 0 0;
+  border-radius: 8pt;
+  padding: 8pt 16pt;
+  border: 1pt solid var(--stroke-strong);
+  background: var(--fill);
+  transition: .3s ease-in-out;
+  cursor: pointer;
+}
+
+.radio-button:hover {
+  border: 1pt solid var(--brand-stroke-weak);
+}
+
+.radio-button.selected {
+  border-color: var(--success-stroke-strong);
+  background: var(--success-fill);
+}
+
+.radio-button p {
+  color: var(--text-strong);
+}
+
+.radio-button span {
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  font-weight: 600;
+  letter-spacing: 0.5pt;
+  color: var(--text-weak);
+}
+
+.status-chip {
+  display: flex;
+  padding: 4pt;
+  border-radius: 2pt;
+  border: 1px solid;
+  line-height: 12pt;
+}
+
+.status-chip.valid {
+  color: var(--success-strong);
+  border-color: var(--success-stroke-weak);
+  background: var(--success-fill);
+}
+
+.status-chip.invalid {
+  color: var(--error-strong);
+  border-color: var(--error-stroke-weak);
+  background: var(--error-fill);
+}
+
