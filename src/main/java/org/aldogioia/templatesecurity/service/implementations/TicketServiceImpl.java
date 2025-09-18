@@ -113,7 +113,7 @@ public class TicketServiceImpl implements TicketService {
         ticketDao.delete(ticket);
     }
 
-    @Scheduled(cron = "0 0 9 * * *")
+    @Scheduled(cron = "0 0 12 * * *")
     @Transactional
     public void updateTicketStatus() {
         ticketDao.findByExhibitionPrice_Exhibition_EndDateBeforeAndStatus(LocalDate.now(), TicketStatus.VALID)

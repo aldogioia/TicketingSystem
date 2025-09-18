@@ -55,8 +55,9 @@ public class PasswordCodeServiceImpl implements PasswordCodeService {
         return false;
     }
 
+
+    @Scheduled(cron = "0 0 12 * * *")
     @Transactional
-    @Scheduled(cron = "0 0 9 * * MON")
     public void cleanUp() {
         passwordCodeDao.deleteAllByExpiresAtIsBefore(LocalDateTime.now());
     }
